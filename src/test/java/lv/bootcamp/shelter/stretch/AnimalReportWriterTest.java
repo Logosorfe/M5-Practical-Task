@@ -1,6 +1,8 @@
 package lv.bootcamp.shelter.stretch;
 
 import lv.bootcamp.shelter.model.Animal;
+import lv.bootcamp.shelter.task4.AnimalSorter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -30,31 +32,55 @@ class AnimalReportWriterTest {
 
     private final AnimalReportWriter writer = new AnimalReportWriter();
 
+    private Animal buddy;
+    private Animal luna;
+    private Animal max;
+
+    @BeforeEach
+    void setUp() {
+        buddy = new Animal("Buddy", "Dog", 3, true, LocalDate.of(2026, 1, 15));
+        luna = new Animal("Luna", "Cat", 2, true, LocalDate.of(2026, 1, 10));
+        max = new Animal("Max", "Dog", 5, false, LocalDate.of(2026, 1, 20));
+    }
+
     @Test
     @DisplayName("writes report file that contains total count")
     void shouldWriteTotalCount() throws IOException {
-        // TODO: Create a list of 3 animals
-        // TODO: Create a temp file: Path output = Files.createTempFile("report-test", ".txt");
-        // TODO: Call writer.writeReport(animals, output)
-        // TODO: Read the file content: String content = Files.readString(output, StandardCharsets.UTF_8);
-        // TODO: Assert content contains "Total animals: 3"
-        // TODO: Clean up: Files.deleteIfExists(output)
+        List<Animal> animals = List.of(buddy, luna, max);
+        Path output = Files.createTempFile("report-test", ".txt");
+        writer.writeReport(animals, output);
+        String content = Files.readString(output, StandardCharsets.UTF_8);
+
+        assertThat(content).contains("Total animals: 3");
+
+        Files.deleteIfExists(output);
     }
 
     @Test
     @DisplayName("writes per-species breakdown in alphabetical order")
     void shouldWriteSpeciesBreakdown() throws IOException {
-        // TODO: Create animals of different species (Dog, Cat)
-        // TODO: Write report to temp file
-        // TODO: Read content and verify "Cat:" appears before "Dog:" (alphabetical)
-        // TODO: Verify vaccinated counts are correct
+        List<Animal> animals = List.of(buddy, luna);
+        Path output = Files.createTempFile("report-test", ".txt");
+        writer.writeReport(animals, output);
+        String content = Files.readString(output, StandardCharsets.UTF_8);
+
+        assertThat(content).containsSubsequence("Cat:", "Dog:");
+        assertThat(content).contains("Cat: 1 total, 1 vaccinated");
+        assertThat(content).contains("Dog: 1 total, 1 vaccinated");
+
+        Files.deleteIfExists(output);
     }
 
     @Test
     @DisplayName("writes oldest animal per species")
     void shouldWriteOldestPerSpecies() throws IOException {
-        // TODO: Create animals where Max (age 5) is the oldest Dog
-        // TODO: Write report to temp file
-        // TODO: Read content and verify it contains "Dog: Max (age 5)"
+        List<Animal> animals = List.of(buddy, max);
+        Path output = Files.createTempFile("report-test", ".txt");
+        writer.writeReport(animals, output);
+        String content = Files.readString(output, StandardCharsets.UTF_8);
+
+        assertThat(content).contains("Dog: Max (age 5)");
+
+        Files.deleteIfExists(output);
     }
 }

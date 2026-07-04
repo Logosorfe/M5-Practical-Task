@@ -20,4 +20,5 @@ public interface AnimalRepository {
     List<Animal> findBySpecies(String species);
 
     void delete(Animal animal);
+    // I think this needs to be implemented in IntakeService and tested, as it is one of the main principles in CRUD
 }

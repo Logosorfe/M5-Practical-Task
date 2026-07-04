@@ -1,5 +1,6 @@
 package lv.bootcamp.shelter.task23;
 
+import lv.bootcamp.shelter.model.Animal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -9,15 +10,21 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * Tasks 2 & 3: Parameterized tests and exception tests
- *
+ * <p>
  * Practice:
  * - @ParameterizedTest with @CsvSource
  * - @ValueSource and @NullAndEmptySource
  * - assertThrows with message checks
  * - AssertJ assertThatThrownBy
- *
+ * <p>
  * Instructions:
  * Write tests for AnimalValidator. Each TODO describes one test to write.
  */
@@ -41,8 +48,7 @@ class AnimalValidatorTest {
         @ValueSource(strings = {"Buddy", "Luna", "Mr. Whiskers", "X"})
         @DisplayName("accepts valid names")
         void shouldAcceptValidNames(String name) {
-            // TODO: Call validator.validateName(name) — it should NOT throw
-            // Hint: use assertDoesNotThrow(() -> validator.validateName(name))
+            assertDoesNotThrow(() -> validator.validateName(name));
         }
 
         @ParameterizedTest
@@ -50,16 +56,23 @@ class AnimalValidatorTest {
         @ValueSource(strings = {"   ", "\t", "\n"})
         @DisplayName("rejects blank or null names")
         void shouldRejectBlankNames(String name) {
-            // TODO: Verify that validateName throws IllegalArgumentException
-            // TODO: Check the message contains "must not be blank"
+            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                    () -> validator.validateName(name));
+            assertThat(ex).hasMessageContaining("must not be blank");
         }
 
         @Test
         @DisplayName("rejects name longer than 100 characters")
         void shouldRejectOverlyLongName() {
-            // TODO: Create a string longer than 100 characters
-            // TODO: Verify that validateName throws IllegalArgumentException
-            // TODO: Check the message contains "100 characters"
+            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                    () -> validator.validateName("The path of the righteous man is beset on all sides by the " +
+                            "inequities of the selfish and the tyranny of evil men. Blessed is he who, in the " +
+                            "name of charity and good will, shepherds the weak through the valley of the " +
+                            "darkness, for he is truly his brother's keeper and the finder of lost children. " +
+                            "And I will strike down upon thee with great vengeance and furious anger those who " +
+                            "attempt to poison and destroy My brothers. And you will know I am the Lord when I " +
+                            "lay My vengeance upon you."));
+            assertThat(ex).hasMessageContaining("100 characters");
         }
     }
 
@@ -76,7 +89,7 @@ class AnimalValidatorTest {
         })
         @DisplayName("accepts valid ages")
         void shouldAcceptValidAges(int age) {
-            // TODO: Call validator.validateAge(age) — it should NOT throw
+            assertDoesNotThrow(() -> validator.validateAge(age));
         }
 
         @ParameterizedTest
@@ -88,8 +101,9 @@ class AnimalValidatorTest {
         })
         @DisplayName("rejects invalid ages with correct message")
         void shouldRejectInvalidAges(int age, String expectedMessagePart) {
-            // TODO: Verify that validateAge(age) throws IllegalArgumentException
-            // TODO: Check that the exception message contains expectedMessagePart
+            IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                    () -> validator.validateAge(age));
+            assertThat(ex).hasMessageContaining(expectedMessagePart);
         }
     }
 
@@ -102,37 +116,52 @@ class AnimalValidatorTest {
         @Test
         @DisplayName("throws NullPointerException for null animal")
         void shouldThrowForNullAnimal() {
-            // TODO: Call validator.validate(null)
-            // TODO: Verify it throws NullPointerException
-            // TODO: Check message contains "must not be null"
+            NullPointerException ex = assertThrows(NullPointerException.class,
+                    () -> validator.validate(null));
+            assertThat(ex).hasMessageContaining("must not be null");
         }
 
         @Test
         @DisplayName("throws for animal with blank name")
         void shouldThrowForBlankName() {
-            // TODO: Create an Animal with blank name
-            // TODO: Verify validate() throws IllegalArgumentException
+            assertThrows(IllegalArgumentException.class, () -> validator.validateName(new Animal("",
+                    "Tiger",
+                    13,
+                    false,
+                    LocalDate.now())
+                    .getName()));
         }
 
         @Test
         @DisplayName("throws for animal with blank species")
         void shouldThrowForBlankSpecies() {
-            // TODO: Create an Animal with valid name but blank species
-            // TODO: Verify validate() throws IllegalArgumentException
+            assertThrows(IllegalArgumentException.class, () -> validator.validateSpecies(new Animal("Rex",
+                    "",
+                    13,
+                    false,
+                    LocalDate.now())
+                    .getSpecies()));
         }
 
         @Test
         @DisplayName("throws for animal with negative age")
         void shouldThrowForNegativeAge() {
-            // TODO: Create an Animal with negative age
-            // TODO: Verify validate() throws IllegalArgumentException
+            assertThrows(IllegalArgumentException.class, () -> validator.validateAge(new Animal("Negativo",
+                    "",
+                    -13,
+                    true,
+                    LocalDate.now())
+                    .getAge()));
         }
 
         @Test
         @DisplayName("does not throw for fully valid animal")
         void shouldPassForValidAnimal() {
-            // TODO: Create a valid Animal (name="Buddy", species="Dog", age=3, vaccinated=true, date=today)
-            // TODO: Call validate() and verify no exception is thrown
+            assertDoesNotThrow(() -> validator.validate(new Animal("Buddy",
+                    "Dog",
+                    3,
+                    true,
+                    LocalDate.now())));
         }
     }
 }

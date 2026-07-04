@@ -29,6 +29,7 @@ public enum AnimalType {
     public boolean isSenior(int age) {
         return age > averageLifespanYears / 2;
     }
+    //this is logically incorrect for odd numbers, as (int) 25 / 2 = 12, so more correct to call it Junior still
 
     /**
      * Looks up an AnimalType by its display name (case-insensitive).
@@ -45,4 +46,5 @@ public enum AnimalType {
         }
         return null;
     }
+    //I do not see any meaning in this method, it does the same as AnymalType.valueOf(String name)
 }
