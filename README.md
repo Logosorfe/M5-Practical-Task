@@ -70,6 +70,7 @@ After completing tasks 1–7:
 
 ## Teacher's comments
 ``` text
-Task 8 (added tests) is not met — the provided TODO scaffolding was completed correctly, but no additional
-test methods were added beyond it. Areas that would benefit most from extra tests: AnimalValidator boundary values, and a multi-row malformed-file scenario in AnimalCsvParser.
+Task 8 (added tests) is not met — the provided TODO scaffolding was completed correctly, but no
+additionaltest methods were added beyond it. Areas that would benefit most from extra tests:
+AnimalValidator boundary values, and a multi-row malformed-file scenario in AnimalCsvParser.
 ```
